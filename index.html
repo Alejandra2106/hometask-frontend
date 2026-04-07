@@ -806,7 +806,7 @@ async function crearTarea(){
       return;
     }
     S.tareas.push({
-      id: data.idTarea, nombre: data.nombreTarea,
+      id: data.idTarea, nombre: nombre,
       dificultad: capitalize(data.dificultad), prioridad: capitalize(data.prioridad),
       fecha, hora, imagen: imgF ? imgF.name : null, imgData: _imgData || null,
       estado: 'Pendiente', asignadoA: null,
