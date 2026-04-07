@@ -735,7 +735,7 @@ async function crearTarea(){
   }
 
   // ④ Nombre duplicado (sin distinguir mayúsculas)
-  const duplicada = S.tareas.some(t => t.nombre.toLowerCase() === nombre.toLowerCase());
+  const duplicada = S.tareas.some(t => t.nombre && t.nombre.toLowerCase() === nombre.toLowerCase());
   if(duplicada){
     showModal({ type:'danger', warn:true, title:'Tarea duplicada',
       sub:`Ya existe una tarea llamada "${nombre}" en el hogar. Por favor elige un nombre diferente.`,
