@@ -344,7 +344,6 @@ function load(){
 // ═══════════════════════════════════════
 async function go(page){
   S.page=page; save();
-  if((page==="inicio"||page==="tareas"||page==="asignar")&&S.hogarId) await cargarTareas();
   render();
 }
 
@@ -1041,6 +1040,7 @@ async function cargarTareas(){
     const tareasLocales = S.tareas; // guardar las tareas locales antes de sobreescribir
     S.tareas = data.map(t => {
       const local = tareasLocales.find(l => l.id == t.idTarea);
+      const imgData = (local && local.imgData) || IMG_CACHE.get(t.idTarea) || null;
       return {
         id: t.idTarea,
         nombre: t.nombre,
@@ -1051,7 +1051,7 @@ async function cargarTareas(){
         estado: mapEstado(t.estado),
         asignadoA: t.usuarioAsignado && t.usuarioAsignado !== 'Sin asignar'
                    ? mapUsuario(t.usuarioAsignado) : null,
-        imgData: local ? local.imgData : null, 
+        imgData: imgData,
         imagen: local ? local.imagen : null,
       };
     });
