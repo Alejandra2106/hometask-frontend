@@ -1034,22 +1034,26 @@ async function cargarTareas(){
     const res = await fetch(`${API}/tareas/hogares/${S.hogarId}`);
     if(!res.ok) return;
     const data = await res.json();
-    S.tareas = data.map(t => ({
-      id: t.idTarea,
-      nombre: t.nombre,
-      dificultad: capitalize(t.dificultad),
-      prioridad: capitalize(t.prioridad),
-      fecha: t.fechaLimite ? t.fechaLimite.substring(0,10) : null,
-      hora: t.fechaLimite ? t.fechaLimite.substring(11,16) : null,
-      estado: mapEstado(t.estado),
-      asignadoA: t.usuarioAsignado && t.usuarioAsignado !== 'Sin asignar'
-                 ? mapUsuario(t.usuarioAsignado) : null,
-      imgData: null, imagen: null,
-    }));
+    const tareasLocales = S.tareas; // guardar las tareas locales antes de sobreescribir
+    S.tareas = data.map(t => {
+      const local = tareasLocales.find(l => l.id == t.idTarea);
+      return {
+        id: t.idTarea,
+        nombre: t.nombre,
+        dificultad: capitalize(t.dificultad),
+        prioridad: capitalize(t.prioridad),
+        fecha: t.fechaLimite ? t.fechaLimite.substring(0,10) : null,
+        hora: t.fechaLimite ? t.fechaLimite.substring(11,16) : null,
+        estado: mapEstado(t.estado),
+        asignadoA: t.usuarioAsignado && t.usuarioAsignado !== 'Sin asignar'
+                   ? mapUsuario(t.usuarioAsignado) : null,
+        imgData: local ? local.imgData : null, 
+        imagen: local ? local.imagen : null,
+      };
+    });
     save();
   } catch(e){ console.error('Error al cargar tareas:', e); }
 }
-
 // ═══════════════════════════════════════
 // BOOT
 // ═══════════════════════════════════════
