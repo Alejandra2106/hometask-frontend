@@ -329,25 +329,20 @@ let _imgData = null;
 
 function save(){ 
   try{ 
-    const sParaGuardar = {...S, tareas: S.tareas.map(t => ({...t, imgData: null}))};
-    localStorage.setItem('ht2', JSON.stringify(sParaGuardar)); 
+    sessionStorage.setItem('ht2', JSON.stringify(S)); 
+    const sBackup = {...S, tareas: S.tareas.map(t => ({...t, imgData: null}))};
+    localStorage.setItem('ht2', JSON.stringify(sBackup)); 
   }catch(e){} 
-}
-
-function saveImg(idTarea, imgData){
-  try{ sessionStorage.setItem('img_'+idTarea, imgData); }catch(e){}
-}
-
-function loadImg(idTarea){
-  return sessionStorage.getItem('img_'+idTarea) || null;
 }
 
 function load(){
   try{
-    const d = localStorage.getItem('ht2');
-    if(d){
-      Object.assign(S, JSON.parse(d));
-      S.tareas.forEach(t => { t.imgData = loadImg(t.id); });
+    const session = sessionStorage.getItem('ht2');
+    if(session){
+      Object.assign(S, JSON.parse(session));
+    } else {
+      const local = localStorage.getItem('ht2');
+      if(local) Object.assign(S, JSON.parse(local));
     }
     if(S.hogar && S.page==='hogar') S.page='inicio';
   }catch(e){}
@@ -828,7 +823,6 @@ async function crearTarea(){
       fecha, hora, imagen: imgF ? imgF.name : null, imgData: _imgData || null,
       estado: 'Pendiente', asignadoA: null,
     });
-    if(_imgData) saveImg(data.idTarea, _imgData);
     save();
 
     // Reset form
