@@ -472,7 +472,7 @@ async function crearHogar(){
     const res = await fetch(`${API}/hogares`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ usuarioId:100, nombreUsuario:'Tú (Admin)', correoUsuario:'admin@hometask.com', nombreHogar:nombre, descripcion })
+      body: JSON.stringify({ usuarioId: Math.floor(Math.random() * 900000) + 100000, nombreUsuario:'Tú (Admin)', correoUsuario:'admin@hometask.com', nombreHogar:nombre, descripcion })
     });
     const data = await res.json();
     if(!res.ok){
