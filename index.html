@@ -309,7 +309,8 @@ const ICONS = {
   bañar:'🐶', planchar:'👕', regar:'🌱', aspirar:'💨', organizar:'📦',
 };
 function taskIcon(t){
-  if(t.imgData) return `<img src="${t.imgData}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
+  const imgData = t.imgData || IMG_CACHE.get(t.id);
+  if(imgData) return `<img src="${imgData}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
   const low = (t.nombre||'').toLowerCase();
   for(const [k,v] of Object.entries(ICONS)) if(low.includes(k)) return `<div class="titem-icon">${v}</div>`;
   return `<div class="titem-icon">✔</div>`;
@@ -326,24 +327,14 @@ const API = 'https://hogar-service-production.up.railway.app/api';
 
 let S = { page:'hogar', hogar:null, hogarId:null, miembros:[], tareas:[], colorIdx:0, lastWeek:null, selMiembro:null, searchQ:'' };
 let _imgData = null;
+const IMG_CACHE = new Map(); 
 
-function save(){ 
-  try{ 
-    sessionStorage.setItem('ht2', JSON.stringify(S)); 
-    const sBackup = {...S, tareas: S.tareas.map(t => ({...t, imgData: null}))};
-    localStorage.setItem('ht2', JSON.stringify(sBackup)); 
-  }catch(e){} 
-}
+function save(){ try{ localStorage.setItem('ht2',JSON.stringify(S)); }catch(e){} }
 
 function load(){
   try{
-    const session = sessionStorage.getItem('ht2');
-    if(session){
-      Object.assign(S, JSON.parse(session));
-    } else {
-      const local = localStorage.getItem('ht2');
-      if(local) Object.assign(S, JSON.parse(local));
-    }
+    const d = localStorage.getItem('ht2');
+    if(d) Object.assign(S, JSON.parse(d));
     if(S.hogar && S.page==='hogar') S.page='inicio';
   }catch(e){}
 }
@@ -823,6 +814,7 @@ async function crearTarea(){
       fecha, hora, imagen: imgF ? imgF.name : null, imgData: _imgData || null,
       estado: 'Pendiente', asignadoA: null,
     });
+    if(_imgData) IMG_CACHE.set(data.idTarea, _imgData);
     save();
 
     // Reset form
